@@ -116,7 +116,7 @@ p {
 }
 
 .load-moreBtn {
-
+	display: none;
 	margin: 0 auto;
 	margin-top: 30px;
 	margin-bottom: 30px;
@@ -144,6 +144,4 @@ p {
 	display: none;
   }
   
-  .visible {
-	display: block;
-  }
+  
