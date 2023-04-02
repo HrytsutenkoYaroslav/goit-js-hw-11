@@ -116,7 +116,7 @@ p {
 }
 
 .load-moreBtn {
-	display: block;
+
 	margin: 0 auto;
 	margin-top: 30px;
 	margin-bottom: 30px;
@@ -140,3 +140,10 @@ p {
 	}
 
 }
+.hidden {
+	display: none;
+  }
+  
+  .visible {
+	display: block;
+  }

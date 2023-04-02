@@ -5,18 +5,19 @@ import './sass/index.scss';
 import NewApiImageService from './js/fetchPictures';
 import renderGallery from './js/renderHtml';
 
+window.addEventListener('scroll', handleScroll);
+
 const refs = {
   formEl: document.querySelector('#search-form'),
   divEl: document.querySelector('.gallery'),
   loadMoreBtn: document.querySelector('.load-moreBtn'),
 };
 
-refs.loadMoreBtn.style.display = 'none';
+refs.loadMoreBtn.classList.add('hidden');
+handleScroll();
 
 const simpleLightbox = new SimpleLightbox('.gallery a');
-
 const imagesApi = new NewApiImageService();
-
 let totalPages = 1;
 
 refs.formEl.addEventListener('submit', onFormSubmit);
@@ -44,8 +45,12 @@ async function fetchImages() {
     );
   } else {
     Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
-    refs.loadMoreBtn.style.display = 'block';
   }
+
+  if (totalHits > 10) {
+    refs.loadMoreBtn.classList.remove('hidden');
+  }
+
   imagesMarkup(response);
 }
 
@@ -58,65 +63,19 @@ function imagesMarkup(data) {
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 
-
-const galleryElement = document.querySelector('.gallery');
-if (galleryElement) {
-  const { height: cardHeight } = galleryElement.firstElementChild.getBoundingClientRect();
-} else {
-  console.error('Element with class "gallery" was not found on the page');
-}
-//const { height: cardHeight } = document
-  //.querySelector('.gallery')
-  //.firstElementChild.getBoundingClientRect();
-
-window.scrollBy({
-  top: cardHeight * 2,
-  behavior: 'smooth',
-});
-
 function onLoadMore() {
-  try {
-    imagesApi.fetchImage().then(imagesMarkup);
-    simpleLightbox.refresh();
-    
-    if (imagesApi.page >= totalPages) {
-      refs.loadMoreBtn.style.display = 'none';
-      Notiflix.Notify.info(
-        'We are sorry, but you have reached the end of search results.'
-      );
-    }
-  } catch (error) {
-    console.log('Error:', error);
+  imagesApi.fetchImage().then(imagesMarkup);
+  simpleLightbox.refresh();
+  if (imagesApi.page >= totalPages) {
+    refs.loadMoreBtn.classList.add('hidden');
+    Notiflix.Notify.info(
+      'We are sorry, but you have reached the end of search results.'
+    );
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//function onLoadMore() {
-  //imagesApi.fetchImage().then(imagesMarkup);
-  //simpleLightbox.refresh();
-  //if (imagesApi.page >= totalPages) {
-    //refs.loadMoreBtn.style.display = 'none';
-    //Notiflix.Notify.info(
-      //'We are sorry, but you have reached the end of search results.'
-    //);
-  //}
-//}
-
+function handleScroll() {
+  if (window.scrollY > window.innerHeight / 2) {
+    refs.loadMoreBtn.classList.remove('hidden');
+  }
+}
