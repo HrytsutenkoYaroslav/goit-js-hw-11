@@ -52,9 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
       imagesMarkup(response);
   
       if (total >= 40 && imagesApi.page < totalPages) { // Проверка на количество изображений и страниц
-        refs.loadMoreBtn.style.display = 'block';; // Отображение кнопки "Load more"
+        refs.loadMoreBtn.style.display = 'block'; // Отображение кнопки "Load more"
       } else {
-        refs.loadMoreBtn.classList.add('hidden'); // Скрытие кнопки "Load more"
+        refs.loadMoreBtn.style.display = 'none'; // Скрытие кнопки "Load more"
       }
   
       if (imagesApi.page >= totalPages) {
