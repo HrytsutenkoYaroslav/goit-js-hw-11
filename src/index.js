@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   
-
+  
   const simpleLightbox = new SimpleLightbox('.gallery a');
   const imagesApi = new NewApiImageService();
   let totalPages = 1;
@@ -51,13 +51,16 @@ document.addEventListener('DOMContentLoaded', function() {
   
       imagesMarkup(response);
   
+      if (total >= 40 && imagesApi.page < totalPages) { // Проверка на количество изображений и страниц
+        refs.loadMoreBtn.style.display = 'block';; // Отображение кнопки "Load more"
+      } else {
+        refs.loadMoreBtn.classList.add('hidden'); // Скрытие кнопки "Load more"
+      }
+  
       if (imagesApi.page >= totalPages) {
-        refs.loadMoreBtn.classList.add('hidden');
         Notiflix.Notify.info(
           'We are sorry, but you have reached the end of search results.'
         );
-      } else {
-        refs.loadMoreBtn.classList.remove('hidden');
       }
     } catch (error) {
       console.error(error);
