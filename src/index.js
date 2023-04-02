@@ -57,9 +57,17 @@ function imagesMarkup(data) {
 
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
-const { height: cardHeight } = document
-  .querySelector('.gallery')
-  .firstElementChild.getBoundingClientRect();
+
+
+const galleryElement = document.querySelector('.gallery');
+if (galleryElement) {
+  const { height: cardHeight } = galleryElement.firstElementChild.getBoundingClientRect();
+} else {
+  console.error('Element with class "gallery" was not found on the page');
+}
+//const { height: cardHeight } = document
+  //.querySelector('.gallery')
+  //.firstElementChild.getBoundingClientRect();
 
 window.scrollBy({
   top: cardHeight * 2,
@@ -67,30 +75,48 @@ window.scrollBy({
 });
 
 function onLoadMore() {
-  imagesApi.fetchImage().then(imagesMarkup);
-  simpleLightbox.refresh();
-  if (imagesApi.page >= totalPages) {
-    refs.loadMoreBtn.style.display = 'none';
-    Notiflix.Notify.info(
-      'We are sorry, but you have reached the end of search results.'
-    );
+  try {
+    imagesApi.fetchImage().then(imagesMarkup);
+    simpleLightbox.refresh();
+    
+    if (imagesApi.page >= totalPages) {
+      refs.loadMoreBtn.style.display = 'none';
+      Notiflix.Notify.info(
+        'We are sorry, but you have reached the end of search results.'
+      );
+    }
+  } catch (error) {
+    console.log('Error:', error);
   }
 }
 
-// const onEntry = entries => {
-// 	entries.forEach(entry => {
-// 		if (entry.isIntersecting && ImagesApi.query !== '') {
-// 			ImagesApi.fetchImage().then(images => {
-// 				imagesMarkup(images);
-//         simpleLightbox.refresh();
-//       });
-//     }
-//   });
-// };
 
-// const options = {
-//   rootMargin: '400px',
-// };
-// const observer = new IntersectionObserver(onEntry, options);
 
-// observer.observe(refs.loadMoreEl);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//function onLoadMore() {
+  //imagesApi.fetchImage().then(imagesMarkup);
+  //simpleLightbox.refresh();
+  //if (imagesApi.page >= totalPages) {
+    //refs.loadMoreBtn.style.display = 'none';
+    //Notiflix.Notify.info(
+      //'We are sorry, but you have reached the end of search results.'
+    //);
+  //}
+//}
+
