@@ -7,6 +7,8 @@ import renderGallery from './js/renderHtml';
 
 
 
+
+
 document.addEventListener('DOMContentLoaded', function() {
   const refs = {
     formEl: document.querySelector('#search-form'),
@@ -14,8 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadMoreBtn: document.querySelector('.load-moreBtn'),
   };
 
-  
-  
   const simpleLightbox = new SimpleLightbox('.gallery a');
   const imagesApi = new NewApiImageService();
   let totalPages = 1;
@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
       Notiflix.Notify.failure('Oops! Something went wrong while fetching images.');
     }
   }
+
   function imagesMarkup(data) {
     refs.divEl.insertAdjacentHTML('beforeend', renderGallery(data.hits));
     simpleLightbox.refresh();
@@ -75,30 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
-  const { height: cardHeight } = document
-  .querySelector('.gallery')
-  .firstElementChild.getBoundingClientRect();
-
-window.scrollBy({
-  top: cardHeight * 2,
-  behavior: 'smooth',
-});
-async function onLoadMore() {
-  try {
-  const images = await imagesApi.fetchImage();
-  imagesMarkup(images);
-  simpleLightbox.refresh();
-  if (imagesApi.page >= totalPages) {
-  refs.loadMoreBtn.classList.add('hidden');
-  Notiflix.Notify.info(
-  'We are sorry, but you have reached the end of search results.'
-  );
+  function onLoadMore() {
+    fetchImages();
   }
-  } catch (error) {
-  console.error(error);
-  Notiflix.Notify.failure('Oops! Something went wrong while loading more images.');
-  }
-  }
-
-  
 });
