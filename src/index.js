@@ -9,7 +9,7 @@ import renderGallery from './js/renderHtml';
 
 
 
-document.addEventListener('DOMContentLoaded', function() {
+
   const refs = {
     formEl: document.querySelector('#search-form'),
     divEl: document.querySelector('.gallery'),
@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const simpleLightbox = new SimpleLightbox('.gallery a');
   const imagesApi = new NewApiImageService();
   let totalPages = 1;
+  let isFirstSearch = true; 
 
   refs.formEl.addEventListener('submit', onFormSubmit);
 
@@ -40,28 +41,33 @@ document.addEventListener('DOMContentLoaded', function() {
       const response = await imagesApi.fetchImage();
       const { hits, totalHits, total } = response;
       totalPages = Math.ceil(total / 40);
-  
+
       if (!hits.length) {
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
       } else {
-        Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
+        if (isFirstSearch || totalHits !== imagesApi.prevTotalHits) { 
+          Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
+        }
+        imagesApi.prevTotalHits = totalHits; 
       }
-  
+
       imagesMarkup(response);
-  
-      if (total >= 40 && imagesApi.page < totalPages) { // Проверка на количество изображений и страниц
-        refs.loadMoreBtn.style.display = 'block'; // Отображение кнопки "Load more"
+
+      if (total - (imagesApi.page - 1) * 40 > 0) {
+        refs.loadMoreBtn.style.display = 'block';
       } else {
-        refs.loadMoreBtn.style.display = 'none'; // Скрытие кнопки "Load more"
+        refs.loadMoreBtn.style.display = 'none';
       }
-  
-      if (imagesApi.page >= totalPages) {
+
+      if (imagesApi.page >= totalPages && total > 0) {
         Notiflix.Notify.info(
           'We are sorry, but you have reached the end of search results.'
         );
       }
+
+      isFirstSearch = false; 
     } catch (error) {
       console.error(error);
       Notiflix.Notify.failure('Oops! Something went wrong while fetching images.');
@@ -79,4 +85,4 @@ document.addEventListener('DOMContentLoaded', function() {
   function onLoadMore() {
     fetchImages();
   }
-});
+;
